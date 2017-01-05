@@ -3,10 +3,9 @@
 
     "name": "Feedly Notifier",
     "description": "__MSG_ExtensionDescription__",
-    "version": "2.7.0",
+    "version": "2.12.1",
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
     "default_locale": "en",
-
     "permissions": [
         "storage",
         "tabs",
@@ -25,7 +24,15 @@
         "default_title": "Feedly Notifier",
         "default_popup": "popup.html"
     },
+    // @if BROWSER!='firefox'
     "options_page": "options.html",
+    // @endif
+    // @if BROWSER='firefox'
+    "options_ui": {
+        "page": "options.html",
+        "open_in_tab": true
+    },
+    // @endif
     "background": {
         "scripts": ["scripts/feedly.api.js", "scripts/core.js"]
     },
@@ -37,6 +44,13 @@
     "web_accessible_resources": [
         "/images/icon128.png"
     ],
-    "homepage_url": "http://olsh.github.io/Feedly-Notifier/",
-    "minimum_chrome_version": "26"
+    // @if BROWSER!='firefox'
+    "minimum_chrome_version": "29",
+    // @endif
+    // @if BROWSER='firefox'
+    "gecko": {
+        "strict_min_version": "50.0"
+    },
+    // @endif
+    "homepage_url": "http://olsh.github.io/Feedly-Notifier/"
 }

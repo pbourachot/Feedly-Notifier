@@ -15,7 +15,7 @@ $(document).ready(function () {
     $("#update-feeds>span").text(chrome.i18n.getMessage("UpdateFeeds"));
     $("#open-all-news>span").text(chrome.i18n.getMessage("OpenAllFeeds"));
     $("#open-unsaved-all-news>span").text(chrome.i18n.getMessage("OpenAllSavedFeeds"));
-    
+
 
     if (popupGlobal.backgroundPage.appGlobal.options.abilitySaveFeeds) {
         $("#popup-content").addClass("tabs");
@@ -27,10 +27,10 @@ $(document).ready(function () {
     if (popupGlobal.supportedTimeAgoLocales.indexOf(window.navigator.language) !== -1) {
         //Trying load localization for jQuery.timeago
         $.getScript("/scripts/timeago/locales/jquery.timeago." + window.navigator.language + ".js", function () {
-            renderFeeds();
+            executeAsync(renderFeeds);
         });
     } else {
-        renderFeeds();
+        executeAsync(renderFeeds);
     }
 });
 
@@ -180,6 +180,19 @@ $("#feedly").on("click", "#feedly-logo", function (event) {
         location.reload();
     }
 });
+
+function executeAsync(func) {
+    // There is a problem with async load on mac https://github.com/olsh/Feedly-Notifier/issues/59
+    chrome.runtime.getPlatformInfo(function (platformInfo) {
+        if (platformInfo.os === "mac") {
+            func();
+        } else {
+            setTimeout(function () {
+                func();
+            }, 0);
+        }
+    });
+}
 
 function renderFeeds(forceUpdate) {
     showLoader();
@@ -363,8 +376,8 @@ function showSavedFeeds() {
     $("#feedly").show().find("#popup-actions").show().children().filter(".icon-refresh").show();
 }
 
-function setPopupExpand(isExpand){
-    if (isExpand){
+function setPopupExpand(isExpand) {
+    if (isExpand) {
         $("#feed, #feed-saved").width(popupGlobal.backgroundPage.appGlobal.options.expandedPopupWidth);
     } else {
         $("#feed, #feed-saved").width(popupGlobal.backgroundPage.appGlobal.options.popupWidth);
